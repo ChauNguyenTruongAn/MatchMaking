@@ -1,24 +1,60 @@
-﻿namespace Swiper
+﻿using Swiper.Controls;
+using System.Diagnostics;
+
+namespace Swiper
 {
     public partial class MainPage : ContentPage
     {
-        int count = 0;
+        private int _lineCount = 0;
+        private int _denyCount = 0;
 
         public MainPage()
         {
             InitializeComponent();
+            try
+            {
+                AddInitialPhotos();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Bug is: " + ex.ToString() +"ajhffafsd");
+            }
+        }
+        
+        private void AddInitialPhotos()
+        {
+            for(int i= 0; i < 10; i++)
+            {
+                InsertPhoto();
+            }
         }
 
-        private void OnCounterClicked(object sender, EventArgs e)
+        private void InsertPhoto()
         {
-            count++;
+            var photo = new SwiperControl();
+            photo.OnLike += Hande_OnLike;
+            photo.OnDeny += Handle_OnDeny;
+            this.MainGrid.Children.Insert(0,photo);
+        }
 
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
-            else
-                CounterBtn.Text = $"Clicked {count} times";
+        private void UpdateGui()
+        {
+            likeLabel.Text = _lineCount.ToString();
+            denyLable.Text = _denyCount.ToString();
+        }
 
-            SemanticScreenReader.Announce(CounterBtn.Text);
+        private void Hande_OnLike(object sender, EventArgs e)
+        {
+            _lineCount++;
+            InsertPhoto();
+            UpdateGui();
+        }
+        
+        private void Handle_OnDeny(object sender, EventArgs e)
+        {
+            _denyCount++;
+            InsertPhoto();
+            UpdateGui();
         }
     }
 
